@@ -55,32 +55,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="麻黄.txt">
-      <Filter>资源文件</Filter>
-    </Text>
-    <Text Include="文档.txt">
-      <Filter>源文件</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="文档.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="..\..\..\..\Desktop\cpp\assets\data1.jpg">
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="..\..\..\..\Desktop\cpp\assets\gancao.jpeg">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="..\..\..\..\Desktop\cpp\assets\guizhi.jpeg">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="..\..\..\..\Desktop\cpp\assets\mahuang.jpeg">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="..\..\..\..\Desktop\cpp\assets\xinren.jpeg">
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="..\..\..\..\Desktop\cpp\assets\back.jpeg">

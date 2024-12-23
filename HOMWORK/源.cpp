@@ -10,6 +10,7 @@
 #include <codecvt>
 #include <locale>
 #include <conio.h>
+#include <windows.h>
 #include <fstream>
 using namespace std;
 #include <string>
@@ -25,8 +26,7 @@ int msg = 0; // 0表示没有鼠标事件，1表示左键按下，2表示左键抬起
 int msx = 0; // 鼠标x坐标
 int msy = 0; // 鼠标y坐标
 int index = 0;
-disease dis[10];
-extern const char* const mName[100] = { "麻黄","桂枝","杏仁","炙甘草" ,"当归","半夏"};
+extern const char* const mName[100] = { "麻黄","桂枝","杏仁","炙甘草" ,"当归","半夏" };
 extern const char* const picture[] = {
 	"./resource/mahuang.jpeg",
 	"./resource/guizhi.jpeg",
@@ -41,57 +41,84 @@ const char* const player::imgRoad[] = {
 	"./resource/danggui.jpg",
 	"./resource/banxia.jpeg",
 };
+extern const char* const judge[4][100] = { "妙手回春啊大夫！","好是好了，但总觉得不得劲儿。","我感觉不太对。","人没了（）。" };
+extern char phenomenon[][100] = { "恶寒发热，头身疼痛，无汗而喘，舌苔薄白，脉浮紧。","桂枝","杏仁","炙甘草" ,"当归","半夏" };
+
 int page = 0;
 IMAGE bg;
 IMAGE bg1;
 IMAGE btn;
-
-// 函数声明
-void checkMouseStatus(int& msx, int& msy);
-int checkAndReturnKBStatus();
+IMAGE bag2;
 void draw();
 void loadR() {
 	loadimage(&bg, "./resource/bg.png", getwidth(), getheight());
 	loadimage(&bg1, "./resource/bg1.jpg", getwidth(), getheight());
 	loadimage(&btn, "./resource/btn.png", 200, 50);
+	loadimage(&bag2, "./resource/bg2.jpeg", getwidth(), getheight());
+
 }
-void check(std::chrono::steady_clock::time_point lastTime);
 bool contain(int rx, int ry, int m_x, int m_y);
 int changePage(int msx, int msy, int msg);
 void printPoint(player pl);
-void begin(std::chrono::steady_clock::time_point lastTime);
+void begin(std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval);
+
+int mainPage(player pl, std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval);
+int newGame(int num, player pl, int index, std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval);
+int Option(std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval);
+int select(int num, player pl, int index, std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval);
 
 int main() {
 	player myPlayer;
-	dis[0].discribe = "外感风寒表实证。恶寒发热，头身疼痛，无汗而喘，舌苔薄白，脉浮紧。";
-	myPlayer.loadMdc();
+	myPlayer.point = 0;
+	int num = 0;
+	int token = 1;
+	
 	loadArrow();
 	// 初始化图形窗口
 	initgraph(1280, 720);
 	// 开启双缓冲绘图模式
 	BeginBatchDraw();
+	int mode = 0;
 	auto lastTime = std::chrono::high_resolution_clock::now();
+	/*while (1)
+	{
+		if (mode == 0) {
+			mode = mainPage(myPlayer, lastTime, msx, msy, msg, kbval);
+		}
+		else if (mode == 1) {
+			mode = newGame(num, myPlayer, index, lastTime, msx, msy, msg, kbval);
+		}
+		else if (mode == 4) {
+			mode = Option(lastTime, msx, msy, msg, kbval);
+		}
+		else if (mode == 2) {
+			mode = select(num, myPlayer, index, lastTime, msx, msy, msg, kbval);
+		}
+		else if (mode == 999) {
+			return 0;
+		}
+	}*/
 start:
 	loadR();
 
 	while (true) {
-		begin(lastTime);
+		begin(lastTime, msx, msy, msg, kbval);
 		char arr[][20] = { "新游戏","药材采集","药材资料","设置","帮助","关于" };
 		// 调用绘图函数
 		draw();
 		page = changePage(msx, msy, msg);
 		if (page == 1)goto ng1;
 		else if (page == 2)goto select;
+		else if (page == 6 && msg == 1)ShellExecute(NULL, "open", "https://www.baidu.com", NULL, NULL, SW_SHOWNORMAL);
 		printPoint(myPlayer);
 		// 结束双缓冲绘图模式并显示缓冲区内容
 		FlushBatchDraw();
 	}
 option:
-	loadR();
-
+	cleardevice();
 	while (true)
 	{
-		begin(lastTime);
+		begin(lastTime, msx, msy, msg, kbval);
 		page = drawTransparentLayer(kbval, msx, msy, msg);
 		if (page == 1)goto ng1;
 		else if (page == 2)goto start;
@@ -100,43 +127,47 @@ option:
 		FlushBatchDraw();
 	}
 
-
-
 ng1:
+	cleardevice();
 	while (1)
 	{
-		begin(lastTime);
+		begin(lastTime, msx, msy, msg, kbval);
 		putimage(0, 0, &bg1);
 		drawRectangle();
 
 		drawArrow();
 
-		drawImage(myPlayer, index);
-		printPoint(myPlayer); 
-		if ( kbval== 27)goto option;
+		int i = drawImage(myPlayer, index);
+		if (i != -1)myPlayer.myassets[i].num++;
+		printPoint(myPlayer);
+		drawDisease(num);
+
+		if (kbval == 27)goto option;
 
 		FlushBatchDraw();
 	}
 select:
+
 	while (3)
 	{
-		begin(lastTime);
+		begin(lastTime, msx, msy, msg, kbval);
+		putimage(0, 0, &bag2);
+
 		printPoint(myPlayer);
 		drawSlct(myPlayer);
 		if (kbval == 27)goto option;
 		FlushBatchDraw();
-
 	}
 end:
 	return 0;
 }
 
-void begin(std::chrono::steady_clock::time_point lastTime) {
+void begin(std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval) {
 	setbkmode(TRANSPARENT);
 	check(lastTime);
 	// 调用函数检查鼠标状态并更新鼠标坐标
-	checkMouseStatus(msx, msy);
-	checkAndReturnKBStatus();
+	checkMouseStatus(msx, msy, msg);
+	checkAndReturnKBStatus(kbval);
 	// 清空缓冲区
 	cleardevice();
 }
@@ -163,13 +194,13 @@ void printPoint(player pl) {
 	outtextxy(1280 - tw - 10, 10, "Point");
 
 	outtextxy(1280 - tw - 10, 30, buffer);
+	delete[] buffer;
 };
 //主页转换页面
 int changePage(int msx, int msy, int msg) {
 	for (int i = 0; i < 6; i++) {
 		//检测悬停
 		if (contain(100, 200 + i * 50, msx, msy)) {
-			//drawPng(70, 200 + i * 50-10, &btn);
 			putimage(70, 200 + i * 50 - 10, &btn);
 			settextcolor(BLACK);
 			outtextxy(100, 200 + 50 * i, arr[i]);
@@ -231,20 +262,6 @@ bool contain(int rx, int ry, int m_x, int m_y)
 	return false;
 }
 
-//优化帧率闪烁
-void check(std::chrono::steady_clock::time_point lastTime) {
-	// 计算自上次循环以来的时间差
-	auto currentTime = std::chrono::high_resolution_clock::now();
-	auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
-
-	// 如果时间差小于所需的时间间隔，则休眠
-	if (elapsedTime < 1000 / 30) {
-		std::this_thread::sleep_for(std::chrono::milliseconds((1000 / 30) - elapsedTime));
-	}
-
-	// 更新上次循环时间
-	lastTime = std::chrono::high_resolution_clock::now();
-};
 //主页绘图
 void draw() {
 	putimage(0, 0, &bg);
@@ -260,37 +277,67 @@ void draw() {
 	settextstyle(30, 0, "华文楷体");
 }
 
-//获取鼠标信息
-void checkMouseStatus(int& msx, int& msy) {
-	// 检测鼠标事件
-	msg = 0;
-	MOUSEMSG m = GetMouseMsg();
-	// 更新鼠标坐标
-	msx = m.x;
-	msy = m.y;
-	// 根据鼠标事件更新msg的值
-	if (m.uMsg == WM_LBUTTONDOWN) {
-		msg = 1; // 左键按下
-	}
-	else if (m.uMsg == WM_LBUTTONUP) {
-		msg = 2; // 左键抬起
-	}
-	else {
-		msg = 0; // 没有鼠标事件
+int mainPage(player pl, std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval) {
+	loadR();
+
+	while (true) {
+		begin(lastTime, msx, msy, msg, kbval);
+		char arr[][20] = { "新游戏","药材采集","药材资料","设置","帮助","关于" };
+		// 调用绘图函数
+		draw();
+		page = changePage(msx, msy, msg);
+		if (page == 1)return 1;
+		else if (page == 2)return 2;
+		else if (page == 3)return 3;
+		else if (page == 6 && msg == 1)ShellExecute(NULL, "open", "https://www.baidu.com", NULL, NULL, SW_SHOWNORMAL);
+		printPoint(pl);
+		// 结束双缓冲绘图模式并显示缓冲区内容
+		FlushBatchDraw();
 	}
 }
 
-//获取键盘信息
-int checkAndReturnKBStatus() {
-	// 检测是否有键盘输入
-	if (_kbhit()) {
-		// 获取按键值并更新全局变量kbval
-		kbval = _getch();
+int Option(std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval) {
+	loadR();
+
+	while (true)
+	{
+		begin(lastTime, msx, msy, msg, kbval);
+		page = drawTransparentLayer(kbval, msx, msy, msg);
+		if (page == 1)return 1;
+		else if (page == 2)return 0;
+		else if (page == 3) return 999;
+		else if (page == 4) return 2;
+		FlushBatchDraw();
 	}
-	// 如果kbval等于ESC键的ASCII码（27），返回3
-	if (kbval == 27) {
-		return 3;
+}
+
+int newGame(int num, player pl, int index, std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval) {
+	loadR();
+	while (1)
+	{
+		begin(lastTime, msx, msy, msg, kbval);
+		putimage(0, 0, &bg1);
+		drawRectangle();
+
+		drawArrow();
+
+		drawImage(pl, index);
+		printPoint(pl);
+		drawDisease(num);
+
+		if (kbval == 27)return 4;
+
+		FlushBatchDraw();
 	}
-	// 否则返回0或其他值
-	return 0;
+}
+
+int select(int num, player pl, int index, std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval) {
+	while (3)
+	{
+		begin(lastTime, msx, msy, msg, kbval);
+		printPoint(pl);
+		drawSlct(pl);
+		if (kbval == 27)return 4;
+		FlushBatchDraw();
+	}
 }

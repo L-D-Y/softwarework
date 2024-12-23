@@ -2,6 +2,7 @@
 #include <iostream>
 #include <conio.h>
 #include <graphics.h>
+#include <chrono>
 
 using namespace std;
 #include <fstream>
@@ -10,12 +11,6 @@ using namespace std;
 extern const char* const mName[];
 extern const char* const picture[];
 
-class disease {
-public:
-	int token;
-	string name;
-	string discribe;
-};
 //3.图表类（杂项图）
 class Medicine {
 public:
@@ -40,11 +35,15 @@ public:
 		point = 0;
 		for (int i = 0; i < 6; i++) {
 			myassets[i] = Medicine(i);
+			loadMdc();
 		}
 	}
 	void loadMdc();
 	void loadMdcd(int x, int y);
 };
+
+void checkMouseStatus(int& msx, int& msy, int& msg);
+int checkAndReturnKBStatus(char& kbval);
 
 //6.页面大类（集成背景图、出现的病情数值、病情的文字资料）
 //7.资源类（到山上采集获得的药材资源）

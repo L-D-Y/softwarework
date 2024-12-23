@@ -144,13 +144,6 @@
     <ClInclude Include="usingClass.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="文档.txt" />
-    <Text Include="麻黄.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="文档.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="..\..\..\..\Desktop\cpp\assets\back.jpeg" />
     <Image Include="..\..\..\..\Desktop\cpp\assets\bg.jpg" />
     <Image Include="..\..\..\..\Desktop\cpp\assets\bg.png" />
@@ -159,9 +152,6 @@
     <Image Include="..\..\..\..\Desktop\cpp\assets\data1.jpeg" />
     <Image Include="..\..\..\..\Desktop\cpp\assets\data1.jpg" />
     <Image Include="..\..\..\..\Desktop\cpp\assets\gancao.jpeg" />
-    <Image Include="..\..\..\..\Desktop\cpp\assets\guizhi.jpeg" />
-    <Image Include="..\..\..\..\Desktop\cpp\assets\mahuang.jpeg" />
-    <Image Include="..\..\..\..\Desktop\cpp\assets\xinren.jpeg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
