@@ -42,7 +42,7 @@ const char* const player::imgRoad[] = {
 	"./resource/banxia.jpeg",
 };
 extern const char* const judge[4][100] = { "妙手回春啊大夫！","好是好了，但总觉得不得劲儿。","我感觉不太对。","人没了（）。" };
-extern char phenomenon[][100] = { "恶寒发热，头身疼痛，无汗而喘，舌苔薄白，脉浮紧。","桂枝","杏仁","炙甘草" ,"当归","半夏" };
+extern char phenomenon[][100] = { "恶寒发热，头身疼痛，无汗而喘，舌苔薄白，脉浮紧。"};
 
 int page = 0;
 IMAGE bg;
@@ -62,103 +62,127 @@ int changePage(int msx, int msy, int msg);
 void printPoint(player pl);
 void begin(std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval);
 
-int mainPage(player pl, std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval);
-int newGame(int num, player pl, int index, std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval);
-int Option(std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval);
-int select(int num, player pl, int index, std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval);
-
 int main() {
 	player myPlayer;
 	myPlayer.point = 0;
 	int num = 0;
 	int token = 1;
-	
 	loadArrow();
 	// 初始化图形窗口
 	initgraph(1280, 720);
+	loadR();
 	// 开启双缓冲绘图模式
 	BeginBatchDraw();
 	int mode = 0;
 	auto lastTime = std::chrono::high_resolution_clock::now();
-	/*while (1)
-	{
-		if (mode == 0) {
-			mode = mainPage(myPlayer, lastTime, msx, msy, msg, kbval);
-		}
-		else if (mode == 1) {
-			mode = newGame(num, myPlayer, index, lastTime, msx, msy, msg, kbval);
-		}
-		else if (mode == 4) {
-			mode = Option(lastTime, msx, msy, msg, kbval);
-		}
-		else if (mode == 2) {
-			mode = select(num, myPlayer, index, lastTime, msx, msy, msg, kbval);
-		}
-		else if (mode == 999) {
-			return 0;
-		}
-	}*/
-start:
-	loadR();
-
-	while (true) {
-		begin(lastTime, msx, msy, msg, kbval);
-		char arr[][20] = { "新游戏","药材采集","药材资料","设置","帮助","关于" };
-		// 调用绘图函数
-		draw();
-		page = changePage(msx, msy, msg);
-		if (page == 1)goto ng1;
-		else if (page == 2)goto select;
-		else if (page == 6 && msg == 1)ShellExecute(NULL, "open", "https://www.baidu.com", NULL, NULL, SW_SHOWNORMAL);
-		printPoint(myPlayer);
-		// 结束双缓冲绘图模式并显示缓冲区内容
-		FlushBatchDraw();
-	}
-option:
-	cleardevice();
 	while (true)
 	{
-		begin(lastTime, msx, msy, msg, kbval);
-		page = drawTransparentLayer(kbval, msx, msy, msg);
-		if (page == 1)goto ng1;
-		else if (page == 2)goto start;
-		else if (page == 3) goto end;
-		else if (page == 4) goto select;
-		FlushBatchDraw();
+		
+		//主页
+		if (mode == 0)
+		{
+			cleardevice();
+			while (true) {
+				begin(lastTime, msx, msy, msg, kbval);
+				char arr[][20] = { "新游戏","药材采集","药材资料","设置","帮助","关于" };
+				// 调用绘图函数
+				draw();
+				page = changePage(msx, msy, msg);
+				if (page == 1) {
+					mode = 1;
+					break;
+				}
+				else if (page == 2) {
+					mode = 2;
+					break;
+				}
+				else if (page == 6 && msg == 1)ShellExecute(NULL, "open", "https://www.baidu.com", NULL, NULL, SW_SHOWNORMAL);
+				printPoint(myPlayer);
+				// 结束双缓冲绘图模式并显示缓冲区内容
+				FlushBatchDraw();
+
+			}
+		}
+		//选项页
+		else if (mode == 11) {
+			cleardevice();
+			while (true)
+			{
+				begin(lastTime, msx, msy, msg, kbval);
+				page = drawTransparentLayer(kbval, msx, msy, msg);
+				if (page == 1) {
+					//新游戏
+					kbval = 0;
+					mode = 1;
+					break;
+				}
+				else if (page == 2) {
+					//回到主页
+					kbval = 0;
+					mode = 0;
+					break;
+				}
+				else if (page == 3) {
+					//退回桌面
+					kbval = 0;
+					mode = 999;
+					break;
+				}
+				else if (page == 4) {
+					//药材采集
+					kbval = 0;
+					mode = 2;
+					break;
+				}
+				FlushBatchDraw();
+			}
+		}
+		//新游戏页
+		else if (mode == 1)
+		{
+			cleardevice();
+			myPlayer.loadMdc();
+			while (1)
+			{
+				begin(lastTime, msx, msy, msg, kbval);
+				putimage(0, 0, &bg1);
+				drawRectangle();
+
+				drawArrow();
+
+				int i = drawImage(myPlayer, index);
+				if (i != -1&& myPlayer.myassets[i].num>0)myPlayer.myassets[i].num--;
+				printPoint(myPlayer);
+				drawDisease(num);
+
+				if (kbval == 27) {
+					mode = 11;
+					break;
+				}
+				FlushBatchDraw();
+				cleardevice();
+			}
+		}
+		//药材采集页
+		else if (mode == 2) {
+
+			cleardevice();
+			while (3)
+			{
+				begin(lastTime, msx, msy, msg, kbval);
+				putimage(0, 0, &bag2);
+				printPoint(myPlayer);
+				int j = drawSlct(myPlayer);
+				if (j != -1)myPlayer.myassets[j].num++;
+				if (kbval == 27) {
+					mode = 11;
+					break;
+				}
+				FlushBatchDraw();
+			}
+		}
+		else if (mode == 999)return 0;
 	}
-
-ng1:
-	cleardevice();
-	while (1)
-	{
-		begin(lastTime, msx, msy, msg, kbval);
-		putimage(0, 0, &bg1);
-		drawRectangle();
-
-		drawArrow();
-
-		int i = drawImage(myPlayer, index);
-		if (i != -1)myPlayer.myassets[i].num++;
-		printPoint(myPlayer);
-		drawDisease(num);
-
-		if (kbval == 27)goto option;
-
-		FlushBatchDraw();
-	}
-select:
-
-	while (3)
-	{
-		begin(lastTime, msx, msy, msg, kbval);
-		putimage(0, 0, &bag2);
-
-		printPoint(myPlayer);
-		drawSlct(myPlayer);
-		if (kbval == 27)goto option;
-		FlushBatchDraw();
-	}
-end:
 	return 0;
 }
 
@@ -206,7 +230,6 @@ int changePage(int msx, int msy, int msg) {
 			outtextxy(100, 200 + 50 * i, arr[i]);
 			if (contain(100, 200, msx, msy)) {
 				if (msg == 1) {
-					cleardevice();
 					return 1;
 				}
 			}
@@ -275,69 +298,4 @@ void draw() {
 	outtextxy(100, 70 + th, "金银花");
 	settextcolor(WHITE);
 	settextstyle(30, 0, "华文楷体");
-}
-
-int mainPage(player pl, std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval) {
-	loadR();
-
-	while (true) {
-		begin(lastTime, msx, msy, msg, kbval);
-		char arr[][20] = { "新游戏","药材采集","药材资料","设置","帮助","关于" };
-		// 调用绘图函数
-		draw();
-		page = changePage(msx, msy, msg);
-		if (page == 1)return 1;
-		else if (page == 2)return 2;
-		else if (page == 3)return 3;
-		else if (page == 6 && msg == 1)ShellExecute(NULL, "open", "https://www.baidu.com", NULL, NULL, SW_SHOWNORMAL);
-		printPoint(pl);
-		// 结束双缓冲绘图模式并显示缓冲区内容
-		FlushBatchDraw();
-	}
-}
-
-int Option(std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval) {
-	loadR();
-
-	while (true)
-	{
-		begin(lastTime, msx, msy, msg, kbval);
-		page = drawTransparentLayer(kbval, msx, msy, msg);
-		if (page == 1)return 1;
-		else if (page == 2)return 0;
-		else if (page == 3) return 999;
-		else if (page == 4) return 2;
-		FlushBatchDraw();
-	}
-}
-
-int newGame(int num, player pl, int index, std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval) {
-	loadR();
-	while (1)
-	{
-		begin(lastTime, msx, msy, msg, kbval);
-		putimage(0, 0, &bg1);
-		drawRectangle();
-
-		drawArrow();
-
-		drawImage(pl, index);
-		printPoint(pl);
-		drawDisease(num);
-
-		if (kbval == 27)return 4;
-
-		FlushBatchDraw();
-	}
-}
-
-int select(int num, player pl, int index, std::chrono::steady_clock::time_point lastTime, int& msx, int& msy, int& msg, char& kbval) {
-	while (3)
-	{
-		begin(lastTime, msx, msy, msg, kbval);
-		printPoint(pl);
-		drawSlct(pl);
-		if (kbval == 27)return 4;
-		FlushBatchDraw();
-	}
 }

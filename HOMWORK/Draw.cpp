@@ -54,16 +54,19 @@ int drawTransparentLayer(char key, int msx, int msy, int msg)
 	setfillcolor(BROWN);
 	if (key == 27)
 	{
-		IMAGE bg;
+		IMAGE bg333;
 		settextcolor(YELLOW);
-		loadimage(&bg, "./resource/R-C.jpeg", getwidth(), getheight());
-		putimage(0, 0, &bg);
+		loadimage(&bg333, "./resource/R-C.jpeg", getwidth(), getheight());
+		putimage(0, 0, &bg333);
 		if (msx > 700 && msx < 800 && msy>200 && msy < 300) {
 			settextcolor(WHITE);
 			solidrectangle(700, 200, 800, 230);
 			outtextxy(700, 200, "继续游戏");
 			settextcolor(YELLOW);
-			if (msg == 1) return 1;
+			if (msg == 1) {
+				cleardevice();
+				return 1;
+			}
 		}
 		else
 			outtextxy(700, 200, "继续游戏");
@@ -72,7 +75,10 @@ int drawTransparentLayer(char key, int msx, int msy, int msg)
 			solidrectangle(700, 300, 800, 330);
 			outtextxy(700, 300, "回到主页");
 			settextcolor(YELLOW);
-			if (msg == 1) return 2;
+			if (msg == 1) {
+				cleardevice();
+				return 2;
+			}
 		}
 		else
 			outtextxy(700, 300, "回到主页");
@@ -81,7 +87,10 @@ int drawTransparentLayer(char key, int msx, int msy, int msg)
 			solidrectangle(700, 400, 800, 430);
 			outtextxy(700, 400, "退回桌面");
 			settextcolor(YELLOW);
-			if (msg == 1) return 3;
+			if (msg == 1) {
+				cleardevice();
+				return 3;
+			}
 		}
 		else
 			outtextxy(700, 400, "退回桌面");
@@ -90,7 +99,10 @@ int drawTransparentLayer(char key, int msx, int msy, int msg)
 			solidrectangle(700, 500, 800, 530);
 			outtextxy(700, 500, "药材采集");
 			settextcolor(YELLOW);
-			if (msg == 1) return 4;
+			if (msg == 1) {
+				cleardevice();
+				return 4;
+			}
 		}
 		else
 			outtextxy(700, 500, "药材采集");
@@ -100,7 +112,9 @@ int drawTransparentLayer(char key, int msx, int msy, int msg)
 			outtextxy(700, 600, "关于");
 
 			settextcolor(YELLOW);
-			if (msg == 1) return 5;
+			if (msg == 1) {
+				ShellExecute(NULL, "open", "https://www.baidu.com", NULL, NULL, SW_SHOWNORMAL);
+			}
 		}
 		else
 			outtextxy(700, 600, "关于");
@@ -168,17 +182,17 @@ int drawSlct(player pl)
 	for (int i = 0; i < 2; i++)
 	{
 		for (int j = 0; j < 3; j++) {
-			putimage(margin+j*400, margin+i*400, &pl.myimg[i * 3 + j]);
+			putimage(margin + j * 400, margin + i * 400, &p.myimg[i * 3 + j]);
 			if (msx > margin + j * 400 && msx < margin + (j+1) * 400 && msy>margin + i * 400 && msy < margin + (i+1) * 400) {
-				solidrectangle(margin + j * 400, margin + 200*i, margin + j * 400+300, margin + 200 * i+100);
-				outtextxy(100, 225, mName[i*3+j]);
+				solidrectangle(margin + j * 400, margin + 400*i, margin + j * 400+100, margin + 400 * i+70);
+				outtextxy(margin + j * 400+50, margin + 400 * i+30, mName[i*3+j]);
 
 				// 将int转换为字符串
 				int length = snprintf(nullptr, 0, "%d", pl.myassets[i * 3 + j ].num);
 				char* buffer = new char[length + 1]; // 分配足够的内存来存储字符串及其结束符
 				// 将整数转换为字符串，并存储在buffer中
 				snprintf(buffer, length + 1, "%d", pl.myassets[i * 3 + j].num);
-				outtextxy(margin + j * 400+50, margin + 200 * i+30, buffer);
+				outtextxy(margin + j * 400+50, margin + 400 * i+50, buffer);
 				if (msg == 1) return i * 3 + j;
 			}
 		}
@@ -207,6 +221,3 @@ void check(std::chrono::steady_clock::time_point lastTime) {
 	// 更新上次循环时间
 	lastTime = std::chrono::high_resolution_clock::now();
 };
-
-int option(int msx, int msy, int msg, IMAGE btn);
-void DrawTextAtPosition(int x, int y, const std::string& text, int maxWidth);
