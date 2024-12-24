@@ -3,7 +3,10 @@
 #include "usingClass.h"
 #include <graphics.h>
 #include <easyx.h>
+#include <chrono>
+
 #include <Windows.h>
+#include <thread>
 IMAGE La;
 IMAGE Ra;
 IMAGE la1;
@@ -12,6 +15,7 @@ extern int msx;
 extern int msy;
 extern int msg;
 extern int index;
+extern char phenomenon[][100];
 void loadArrow() {
 	loadimage(&La, "./resource/Larrow.png", 50, 50);
 	loadimage(&Ra, "./resource/Rarrow.png", 50, 50);
@@ -38,21 +42,31 @@ int drawArrow() {
 	return 0;
 }
 
+void drawDisease(int n) {
+	settextcolor(WHITE);
+	outtextxy(500, 450, "症状：");
+	outtextxy(500, 500, phenomenon[n]);
+	outtextxy(500, 600, "用药：");
+};
+
 int drawTransparentLayer(char key, int msx, int msy, int msg)
 {
 	setfillcolor(BROWN);
 	if (key == 27)
 	{
-		IMAGE bg;
+		IMAGE bg333;
 		settextcolor(YELLOW);
-		loadimage(&bg, "./resource/R-C.jpeg", getwidth(), getheight());
-		putimage(0, 0, &bg);
+		loadimage(&bg333, "./resource/R-C.jpeg", getwidth(), getheight());
+		putimage(0, 0, &bg333);
 		if (msx > 700 && msx < 800 && msy>200 && msy < 300) {
 			settextcolor(WHITE);
 			solidrectangle(700, 200, 800, 230);
 			outtextxy(700, 200, "继续游戏");
 			settextcolor(YELLOW);
-			if (msg == 1) return 1;
+			if (msg == 1) {
+				cleardevice();
+				return 1;
+			}
 		}
 		else
 			outtextxy(700, 200, "继续游戏");
@@ -61,7 +75,10 @@ int drawTransparentLayer(char key, int msx, int msy, int msg)
 			solidrectangle(700, 300, 800, 330);
 			outtextxy(700, 300, "回到主页");
 			settextcolor(YELLOW);
-			if (msg == 1) return 2;
+			if (msg == 1) {
+				cleardevice();
+				return 2;
+			}
 		}
 		else
 			outtextxy(700, 300, "回到主页");
@@ -70,7 +87,10 @@ int drawTransparentLayer(char key, int msx, int msy, int msg)
 			solidrectangle(700, 400, 800, 430);
 			outtextxy(700, 400, "退回桌面");
 			settextcolor(YELLOW);
-			if (msg == 1) return 3;
+			if (msg == 1) {
+				cleardevice();
+				return 3;
+			}
 		}
 		else
 			outtextxy(700, 400, "退回桌面");
@@ -79,7 +99,10 @@ int drawTransparentLayer(char key, int msx, int msy, int msg)
 			solidrectangle(700, 500, 800, 530);
 			outtextxy(700, 500, "药材采集");
 			settextcolor(YELLOW);
-			if (msg == 1) return 4;
+			if (msg == 1) {
+				cleardevice();
+				return 4;
+			}
 		}
 		else
 			outtextxy(700, 500, "药材采集");
@@ -89,7 +112,9 @@ int drawTransparentLayer(char key, int msx, int msy, int msg)
 			outtextxy(700, 600, "关于");
 
 			settextcolor(YELLOW);
-			if (msg == 1) return 5;
+			if (msg == 1) {
+				ShellExecute(NULL, "open", "https://www.baidu.com", NULL, NULL, SW_SHOWNORMAL);
+			}
 		}
 		else
 			outtextxy(700, 600, "关于");
@@ -97,49 +122,83 @@ int drawTransparentLayer(char key, int msx, int msy, int msg)
 	return 0;
 }
 
-void drawImage(player pl, int index)
+int drawImage(player pl, int index)
 {
-	settextcolor(BLACK);
+	settextcolor(WHITE);
+	setfillcolor(GREEN);
 	IMAGE a1;
 	loadimage(&a1, "./resource/back.jpeg", 100, 100);
 	pl.loadMdcd(150, 200);
-	putimage(87.5, 125, &pl.myimg[0 + index * 3]);
+	putimage(87, 125, &pl.myimg[0 + index * 3]);
+
 	if (msx > 87 && msx < 238 && msy>125 && msy < 325) {
+		solidrectangle(90, 220, 200, 270);
 		outtextxy(100, 225, mName[0 + index * 3]);
+
+		// 将int转换为字符串
+		int length = snprintf(nullptr, 0, "%d", pl.myassets[0 + index * 3].num);
+		char* buffer = new char[length + 1]; // 分配足够的内存来存储字符串及其结束符
+		// 将整数转换为字符串，并存储在buffer中
+		snprintf(buffer, length + 1, "%d", pl.myassets[0 + index * 3].num);
+		outtextxy(100, 250, buffer);
+		if (msg == 1) return 0 + index * 3;
 	}
-	putimage(87.5, 325, &pl.myimg[1 + index * 3]);
+	putimage(87, 325, &pl.myimg[1 + index * 3]);
 	if (msx > 87 && msx < 238 && msy>325 && msy < 525) {
+		solidrectangle(90, 420, 200, 470);
 		outtextxy(100, 425, mName[1 + index * 3]);
+		// 将int转换为字符串
+		int length = snprintf(nullptr, 0, "%d", pl.myassets[1 + index * 3].num);
+		char* buffer = new char[length + 1]; // 分配足够的内存来存储字符串及其结束符
+		// 将整数转换为字符串，并存储在buffer中
+		snprintf(buffer, length + 1, "%d", pl.myassets[1 + index * 3].num);
+		outtextxy(100, 450, buffer);
+		if (msg == 1) return 1 + index * 3;
 	}
-	putimage(87.5, 525, &pl.myimg[2 + index * 3]);
+	putimage(87, 525, &pl.myimg[2 + index * 3]);
 	if (msx > 87 && msx < 238 && msy>525 && msy < 725) {
+		solidrectangle(90, 620, 200, 670);
+
 		outtextxy(100, 625, mName[2 + index * 3]);
+		// 将int转换为字符串
+		int length = snprintf(nullptr, 0, "%d", pl.myassets[2 + index * 3].num);
+		char* buffer = new char[length + 1]; // 分配足够的来存储字符串及其结束符
+		// 将整数转换为字符串，并存储在buffer中
+		snprintf(buffer, length + 1, "%d", pl.myassets[2 + index * 3].num);
+		outtextxy(100, 650, buffer);
+		if (msg == 1) return 2 + index * 3;
 	}
+	return -1;
 }
 
-void drawSlct(player pl)
+int drawSlct(player pl)
 {
-	cleardevice();
-	pl.loadMdcd(300,300);
+	player p;
+	p.loadMdcd(400, 400);
 	int margin = 5; // 边距和图之间的间距
-	int rects[9][4] = {
-	  {margin, margin, 400 + margin, 400 - margin},   // 左边矩形方块
-	  {400 + margin, margin, 800 + margin, 400 - margin},  // 中间左边矩形方块
-	  {800 + margin, margin, 1200 - margin, 400 - margin}, // 中间右边矩形方块
-	  {margin, 400 + margin, 400 + margin, 800 - margin},  // 左边上方矩形方块
-	  {400 + margin, 400 + margin, 800 + margin, 800 - margin}, // 中间上方矩形方块
-	  {800 + margin, 400 + margin, 1200 - margin, 800 - margin},// 中间下方矩形方块
-	  {margin, 800 + margin, 400 + margin, 1200 - margin},  // 左边下方矩形方块
-	  {400 + margin, 800 + margin, 800 + margin, 1200 - margin}, // 中间下方矩形方块
-	  {800 + margin, 800 + margin, 1200 - margin, 1200 - margin} // 右边下方矩形方块
-	};
-
+	settextcolor(WHITE);
+	setfillcolor(GREEN);
 	// 使用循环绘制9张图
-	for (int i = 0; i < 9; ++i)
+	for (int i = 0; i < 2; i++)
 	{
-		putimage(rects[i][0], rects[i][1], &pl.myimg[i]);
-	}
+		for (int j = 0; j < 3; j++) {
+			putimage(margin + j * 400, margin + i * 400, &p.myimg[i * 3 + j]);
+			if (msx > margin + j * 400 && msx < margin + (j+1) * 400 && msy>margin + i * 400 && msy < margin + (i+1) * 400) {
+				solidrectangle(margin + j * 400, margin + 400*i, margin + j * 400+100, margin + 400 * i+70);
+				outtextxy(margin + j * 400+50, margin + 400 * i+30, mName[i*3+j]);
 
+				// 将int转换为字符串
+				int length = snprintf(nullptr, 0, "%d", pl.myassets[i * 3 + j ].num);
+				char* buffer = new char[length + 1]; // 分配足够的内存来存储字符串及其结束符
+				// 将整数转换为字符串，并存储在buffer中
+				snprintf(buffer, length + 1, "%d", pl.myassets[i * 3 + j].num);
+				outtextxy(margin + j * 400+50, margin + 400 * i+50, buffer);
+				if (msg == 1) return i * 3 + j;
+			}
+		}
+
+	}
+	return -1;
 }
 
 bool containOP(int rx, int ry, int m_x, int m_y) {
@@ -149,5 +208,16 @@ bool containOP(int rx, int ry, int m_x, int m_y) {
 	return false;
 }
 
-int option(int msx, int msy, int msg, IMAGE btn);
-void DrawTextAtPosition(int x, int y, const std::string& text, int maxWidth);
+void check(std::chrono::steady_clock::time_point lastTime) {
+	// 计算自上次循环以来的时间差
+	auto currentTime = std::chrono::high_resolution_clock::now();
+	auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
+
+	// 如果时间差小于所需的时间间隔，则休眠
+	if (elapsedTime < 1000 / 30) {
+		std::this_thread::sleep_for(std::chrono::milliseconds((1000 / 30) - elapsedTime));
+	}
+
+	// 更新上次循环时间
+	lastTime = std::chrono::high_resolution_clock::now();
+};

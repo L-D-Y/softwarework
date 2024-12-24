@@ -1,4 +1,5 @@
 #pragma once
+#include "usingClass.h"
 #include <iostream>
 #include <codecvt>
 #include <conio.h>
