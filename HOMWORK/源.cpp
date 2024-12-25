@@ -1,8 +1,5 @@
 #pragma once
-#include "sup.h"
 #include "Draw.h"
-#include "Setting.h"
-#include "resource.h"
 #include "usingClass.h"
 #include <easyx.h>
 #include <iostream>
@@ -42,7 +39,7 @@ const char* const player::imgRoad[] = {
 	"./resource/banxia.jpeg",
 };
 extern const char* const judge[4] = { "妙手回春啊大夫！","好是好了，但总觉得不得劲儿。","我感觉不太对。","人没了（）。" };
-extern char phenomenon[][100] = { "恶寒发热，头身疼痛，无汗而喘，舌苔薄白，脉浮紧。"};
+extern char phenomenon[][100] = { "恶寒发热，头身疼痛，无汗而喘，舌苔薄白，脉浮紧。" };
 extern int method[][4] = { {0,1,2,3} };
 
 int page = 0;
@@ -56,7 +53,6 @@ static void loadR() {
 	loadimage(&bg1, "./resource/bg1.jpg", getwidth(), getheight());
 	loadimage(&btn, "./resource/btn.png", 200, 50);
 	loadimage(&bag2, "./resource/bg2.jpeg", getwidth(), getheight());
-
 }
 bool contain(int rx, int ry, int m_x, int m_y);
 int changePage(int msx, int msy, int msg);
@@ -78,7 +74,6 @@ int main() {
 	auto lastTime = std::chrono::high_resolution_clock::now();
 	while (true)
 	{
-		
 		//主页
 		if (mode == 0)
 		{
@@ -103,7 +98,6 @@ int main() {
 				printPoint(myPlayer);
 				// 结束双缓冲绘图模式并显示缓冲区内容
 				FlushBatchDraw();
-
 			}
 		}
 		//选项页
@@ -153,7 +147,7 @@ int main() {
 			while (1)
 			{
 				begin(lastTime, msx, msy, msg, kbval);
-				if (dis_token > 3&&msg==1)break;
+				if (dis_token > 3 && msg == 1)break;
 
 				putimage(0, 0, &bg1);
 				drawRectangle();
@@ -165,18 +159,17 @@ int main() {
 				drawDisease(num);
 				drawUseMdc(a[0], a[1], a[2], a[3]);
 
-				if (dis_token <= 3&&msg==1&&i!=-1 && myPlayer.myassets[i].num > 0) {
+				if (dis_token <= 3 && msg == 1 && i != -1 && myPlayer.myassets[i].num > 0) {
 					a[dis_token] = i;
 					if (method[num][dis_token] == i) {
-						correct += w;			
+						correct += w;
 					}
 					w /= 10;
 					dis_token++;
 					myPlayer.myassets[i].num--;
-
 				}
 				if (dis_token == 4) {
-					drawResult(&myPlayer, correct,count);
+					drawResult(&myPlayer, correct, count);
 					count = 1;
 				}
 				if (kbval == 27) {
@@ -189,7 +182,6 @@ int main() {
 		}
 		//药材采集页
 		else if (mode == 2) {
-
 			cleardevice();
 			while (3)
 			{
@@ -298,7 +290,6 @@ int changePage(int msx, int msy, int msg) {
 
 		//默认显示
 		outtextxy(100, 200 + 50 * i, arr[i]);
-
 	}
 };
 bool contain(int rx, int ry, int m_x, int m_y)

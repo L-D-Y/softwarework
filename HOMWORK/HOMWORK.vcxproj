@@ -129,18 +129,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Draw.cpp" />
-    <ClCompile Include="Setting.cpp" />
-    <ClCompile Include="sup.cpp" />
-    <ClCompile Include="test.cpp" />
     <ClCompile Include="usingClass.cpp" />
     <ClCompile Include="源.cpp" />
-    <ClCompile Include="resource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Draw.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="Setting.h" />
-    <ClInclude Include="sup.h" />
     <ClInclude Include="usingClass.h" />
   </ItemGroup>
   <ItemGroup>

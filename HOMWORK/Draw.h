@@ -1,7 +1,4 @@
 #pragma once
-#include "sup.h"
-#include "Setting.h"
-#include "resource.h"
 #include "usingClass.h"
 #include <iostream>
 #include <codecvt>
@@ -28,5 +25,5 @@ int drawSlct(player pl);
 //6.ªÊ÷∆≤°«È
 void drawDisease(int index);
 void drawUseMdc(int a1, int a2, int a3, int a4);
-void drawResult( player* pl,int correct,int count);
+void drawResult(player* pl, int correct, int count);
 void check(std::chrono::steady_clock::time_point lastTime);

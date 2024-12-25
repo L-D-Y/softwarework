@@ -1,9 +1,6 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
-#include "sup.h"
 #include "Draw.h"
-#include "Setting.h"
-#include "resource.h"
 #include "usingClass.h"
 #include <easyx.h>
 #include <iostream>

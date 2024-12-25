@@ -62,7 +62,7 @@ void drawUseMdc(int a1, int a2, int a3, int a4)
 		outtextxy(725, 650, mName[a2]);
 	}
 	if (a3 != -1) {
-		outtextxy(800, 650,"使药：");
+		outtextxy(800, 650, "使药：");
 		outtextxy(875, 650, mName[a3]);
 	}
 	if (a4 != -1) {
@@ -70,15 +70,15 @@ void drawUseMdc(int a1, int a2, int a3, int a4)
 		outtextxy(1025, 650, mName[a4]);
 	}
 }
-void drawResult( player* pl,int correct,int count)
+void drawResult(player* pl, int correct, int count)
 {
-	if (correct==1111)
+	if (correct == 1111)
 	{
 		outtextxy(500, 300, judge[0]);
-		if(count==0)
+		if (count == 0)
 			pl->point += 1000;
 	}
-	else if (correct ==1100||correct==1101||correct==1110)
+	else if (correct == 1100 || correct == 1101 || correct == 1110)
 	{
 		outtextxy(500, 300, judge[1]);
 		if (count == 0)
@@ -90,7 +90,7 @@ void drawResult( player* pl,int correct,int count)
 		if (count == 0)
 			pl->point += 10;
 	}
-	else if (correct <1000)
+	else if (correct < 1000)
 	{
 		outtextxy(500, 300, judge[3]);
 		if (count == 0)
@@ -231,20 +231,19 @@ int drawSlct(player pl)
 	{
 		for (int j = 0; j < 3; j++) {
 			putimage(margin + j * 400, margin + i * 400, &pl.myimg[i * 3 + j]);
-			if (msx > margin + j * 400 && msx < margin + (j+1) * 400 && msy>margin + i * 400 && msy < margin + (i+1) * 400) {
-				solidrectangle(margin + j * 400, margin + 400*i, margin + j * 400+100, margin + 400 * i+70);
-				outtextxy(margin + j * 400+50, margin + 400 * i+30, mName[i*3+j]);
+			if (msx > margin + j * 400 && msx < margin + (j + 1) * 400 && msy>margin + i * 400 && msy < margin + (i + 1) * 400) {
+				solidrectangle(margin + j * 400, margin + 400 * i, margin + j * 400 + 100, margin + 400 * i + 70);
+				outtextxy(margin + j * 400 + 50, margin + 400 * i + 30, mName[i * 3 + j]);
 
 				// 将int转换为字符串
-				int length = snprintf(nullptr, 0, "%d", pl.myassets[i * 3 + j ].num);
+				int length = snprintf(nullptr, 0, "%d", pl.myassets[i * 3 + j].num);
 				char* buffer = new char[length + 1]; // 分配足够的内存来存储字符串及其结束符
 				// 将整数转换为字符串，并存储在buffer中
 				snprintf(buffer, length + 1, "%d", pl.myassets[i * 3 + j].num);
-				outtextxy(margin + j * 400+50, margin + 400 * i+50, buffer);
+				outtextxy(margin + j * 400 + 50, margin + 400 * i + 50, buffer);
 				if (msg == 1) return i * 3 + j;
 			}
 		}
-
 	}
 	return -1;
 }

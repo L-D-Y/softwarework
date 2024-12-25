@@ -15,16 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="sup.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Draw.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Setting.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="usingClass.cpp">
@@ -33,21 +24,9 @@
     <ClCompile Include="源.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="resource.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sup.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Draw.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Setting.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="usingClass.h">
