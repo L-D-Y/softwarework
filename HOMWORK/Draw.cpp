@@ -16,6 +16,8 @@ extern int msy;
 extern int msg;
 extern int index;
 extern char phenomenon[][100];
+extern const char* const mName[100];
+extern const char* const judge[4];
 void loadArrow() {
 	loadimage(&La, "./resource/Larrow.png", 50, 50);
 	loadimage(&Ra, "./resource/Rarrow.png", 50, 50);
@@ -47,7 +49,55 @@ void drawDisease(int n) {
 	outtextxy(500, 450, "Ö¢×´£º");
 	outtextxy(500, 500, phenomenon[n]);
 	outtextxy(500, 600, "ÓÃÒ©£º");
-};
+}
+void drawUseMdc(int a1, int a2, int a3, int a4)
+{
+	settextcolor(WHITE);
+	if (a1 != -1) {
+		outtextxy(500, 650, "¾ýÒ©£º");
+		outtextxy(575, 650, mName[a1]);
+	}
+	if (a2 != -1) {
+		outtextxy(650, 650, "³¼Ò©£º");
+		outtextxy(725, 650, mName[a2]);
+	}
+	if (a3 != -1) {
+		outtextxy(800, 650,"Ê¹Ò©£º");
+		outtextxy(875, 650, mName[a3]);
+	}
+	if (a4 != -1) {
+		outtextxy(950, 650, "×ôÒ©£º");
+		outtextxy(1025, 650, mName[a4]);
+	}
+}
+void drawResult( player* pl,int correct,int count)
+{
+	if (correct==1111)
+	{
+		outtextxy(500, 300, judge[0]);
+		if(count==0)
+			pl->point += 1000;
+	}
+	else if (correct ==1100||correct==1101||correct==1110)
+	{
+		outtextxy(500, 300, judge[1]);
+		if (count == 0)
+			pl->point += 100;
+	}
+	else if (correct == 1000 || correct == 1001 || correct == 1010)
+	{
+		outtextxy(500, 300, judge[2]);
+		if (count == 0)
+			pl->point += 10;
+	}
+	else if (correct <1000)
+	{
+		outtextxy(500, 300, judge[3]);
+		if (count == 0)
+			pl->point -= 1000;
+	}
+}
+;
 
 int drawTransparentLayer(char key, int msx, int msy, int msg)
 {
@@ -173,8 +223,6 @@ int drawImage(player pl, int index)
 
 int drawSlct(player pl)
 {
-	player p;
-	p.loadMdcd(400, 400);
 	int margin = 5; // ±ß¾àºÍÍ¼Ö®¼äµÄ¼ä¾à
 	settextcolor(WHITE);
 	setfillcolor(GREEN);
@@ -182,7 +230,7 @@ int drawSlct(player pl)
 	for (int i = 0; i < 2; i++)
 	{
 		for (int j = 0; j < 3; j++) {
-			putimage(margin + j * 400, margin + i * 400, &p.myimg[i * 3 + j]);
+			putimage(margin + j * 400, margin + i * 400, &pl.myimg[i * 3 + j]);
 			if (msx > margin + j * 400 && msx < margin + (j+1) * 400 && msy>margin + i * 400 && msy < margin + (i+1) * 400) {
 				solidrectangle(margin + j * 400, margin + 400*i, margin + j * 400+100, margin + 400 * i+70);
 				outtextxy(margin + j * 400+50, margin + 400 * i+30, mName[i*3+j]);

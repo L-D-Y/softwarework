@@ -18,8 +18,8 @@ public:
 	int token;
 	int num;
 	Medicine() {};
-	Medicine(int token) {
-		token = token;
+	Medicine(int t) {
+		this->token = t;
 		num = 0;
 	}
 };//4.×ÊÁÏÀà
@@ -34,7 +34,7 @@ public:
 	player() {
 		point = 0;
 		for (int i = 0; i < 6; i++) {
-			myassets[i] = Medicine(i);
+			myassets[i] = Medicine(i+1);
 			loadMdc();
 		}
 	}

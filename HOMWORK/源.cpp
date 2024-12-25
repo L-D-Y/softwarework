@@ -18,7 +18,7 @@ using namespace std;
 #include <chrono>
 #include <thread>
 #include <cstring>
-char arr[][20] = { "新游戏","药材采集","药材资料","设置","帮助","关于" };
+char arr[][20] = { "开始游戏","药材采集","药材资料","设置","帮助","关于" };
 //检测键盘输入
 char kbval = 0;
 // 定义全局变量
@@ -41,8 +41,9 @@ const char* const player::imgRoad[] = {
 	"./resource/danggui.jpg",
 	"./resource/banxia.jpeg",
 };
-extern const char* const judge[4][100] = { "妙手回春啊大夫！","好是好了，但总觉得不得劲儿。","我感觉不太对。","人没了（）。" };
+extern const char* const judge[4] = { "妙手回春啊大夫！","好是好了，但总觉得不得劲儿。","我感觉不太对。","人没了（）。" };
 extern char phenomenon[][100] = { "恶寒发热，头身疼痛，无汗而喘，舌苔薄白，脉浮紧。"};
+extern int method[][4] = { {0,1,2,3} };
 
 int page = 0;
 IMAGE bg;
@@ -50,7 +51,7 @@ IMAGE bg1;
 IMAGE btn;
 IMAGE bag2;
 void draw();
-void loadR() {
+static void loadR() {
 	loadimage(&bg, "./resource/bg.png", getwidth(), getheight());
 	loadimage(&bg1, "./resource/bg1.jpg", getwidth(), getheight());
 	loadimage(&btn, "./resource/btn.png", 200, 50);
@@ -83,8 +84,8 @@ int main() {
 		{
 			cleardevice();
 			while (true) {
+				page = 0;
 				begin(lastTime, msx, msy, msg, kbval);
-				char arr[][20] = { "新游戏","药材采集","药材资料","设置","帮助","关于" };
 				// 调用绘图函数
 				draw();
 				page = changePage(msx, msy, msg);
@@ -96,7 +97,9 @@ int main() {
 					mode = 2;
 					break;
 				}
-				else if (page == 6 && msg == 1)ShellExecute(NULL, "open", "https://www.baidu.com", NULL, NULL, SW_SHOWNORMAL);
+				else if (page == 5 && msg == 1)ShellExecute(NULL, "open", "http://www.cntcm.com.cn/", NULL, NULL, SW_SHOWNORMAL);
+				else if (page == 6 && msg == 1)
+					ShellExecute(NULL, "open", "https://www.baidu.com", NULL, NULL, SW_SHOWNORMAL);
 				printPoint(myPlayer);
 				// 结束双缓冲绘图模式并显示缓冲区内容
 				FlushBatchDraw();
@@ -140,21 +143,42 @@ int main() {
 		//新游戏页
 		else if (mode == 1)
 		{
+			int dis_token = 0;
+			int w = 1000;
+			int correct = 0;
+			int count = 0;
+			int a[4] = { -1,-1,-1,-1 };
 			cleardevice();
 			myPlayer.loadMdc();
 			while (1)
 			{
 				begin(lastTime, msx, msy, msg, kbval);
+				if (dis_token > 3&&msg==1)break;
+
 				putimage(0, 0, &bg1);
 				drawRectangle();
-
 				drawArrow();
 
 				int i = drawImage(myPlayer, index);
-				if (i != -1&& myPlayer.myassets[i].num>0)myPlayer.myassets[i].num--;
+
 				printPoint(myPlayer);
 				drawDisease(num);
+				drawUseMdc(a[0], a[1], a[2], a[3]);
 
+				if (dis_token <= 3&&msg==1&&i!=-1 && myPlayer.myassets[i].num > 0) {
+					a[dis_token] = i;
+					if (method[num][dis_token] == i) {
+						correct += w;			
+					}
+					w /= 10;
+					dis_token++;
+					myPlayer.myassets[i].num--;
+
+				}
+				if (dis_token == 4) {
+					drawResult(&myPlayer, correct,count);
+					count = 1;
+				}
 				if (kbval == 27) {
 					mode = 11;
 					break;
@@ -274,6 +298,7 @@ int changePage(int msx, int msy, int msg) {
 
 		//默认显示
 		outtextxy(100, 200 + 50 * i, arr[i]);
+
 	}
 };
 bool contain(int rx, int ry, int m_x, int m_y)
